@@ -35,3 +35,15 @@ jobs:
           docker push abhim0055/netflix:latest
         env:
           DOCKER_CLI_ACI: 1
+  deploy: 
+     needs: build-analyze-scan
+     runs-on: [aws-netflix]
+     steps:
+       - name: Pull Docker Image
+         run: docker pull abhim0055/netflix:latest
+
+       - name: Trivy Image Scan
+         run: trivy image abhim0055/netflix:latest
+
+       - name: Run the Docker Container
+         run: docker run -d --name netflix -p 8081:80 abhim0055/netflix:latest
